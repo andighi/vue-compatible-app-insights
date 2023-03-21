@@ -1,0 +1,1 @@
+# vue-compatible-app-insights
