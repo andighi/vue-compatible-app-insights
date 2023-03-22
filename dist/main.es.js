@@ -9822,7 +9822,7 @@ function install(app, options) {
     if (options.trackInitialPageView !== false) {
       setupPageTracking(options, insights);
     } else {
-      router.onReady(() => setupPageTracking(options, insights));
+      router.isReady().then(() => setupPageTracking(options, insights));
     }
   }
   if (isVue2) {
@@ -9832,21 +9832,23 @@ function install(app, options) {
   } else
     app.provide("appInsights", insights);
 }
-function setupPageTracking(options, app) {
+function setupPageTracking(options, inisghts) {
   const router = options.router;
   const baseName = options.baseName || "(Vue App)";
-  router.beforeEach((route, from, next) => {
-    const name = baseName + " / " + route.name;
-    app.context.telemetryTrace.traceID = Util.generateW3CId();
-    app.context.telemetryTrace.name = route.name;
-    app.startTrackPage(name);
-    next();
-  });
-  router.afterEach((route) => {
-    const name = baseName + " / " + route.name;
-    const url = location.protocol + "//" + location.host + route.fullPath;
-    app.stopTrackPage(name, url);
-    app.flush();
-  });
+  if (router) {
+    router.beforeEach((route, from, next) => {
+      const name = baseName + " / " + route.name;
+      inisghts.context.telemetryTrace.traceID = Util.generateW3CId();
+      inisghts.context.telemetryTrace.name = route.name;
+      inisghts.startTrackPage(name);
+      next();
+    });
+    router.afterEach((route) => {
+      const name = baseName + " / " + route.name;
+      const url = location.protocol + "//" + location.host + route.fullPath;
+      inisghts.stopTrackPage(name, url);
+      inisghts.flush();
+    });
+  }
 }
 export { install as default };

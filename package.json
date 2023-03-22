@@ -30,6 +30,7 @@
     "vite": "^2.9.9"
   },
   "dependencies": {
-    "@microsoft/applicationinsights-web": "^2.8.11"
+    "@microsoft/applicationinsights-web": "^2.8.11",
+    "vue-router": "^4.1.6"
   }
 }
