@@ -1,14 +1,31 @@
-import { ApplicationInsights, Util } from "@microsoft/applicationinsights-web";
+import {
+  ApplicationInsights,
+  Util,
+  IConfiguration,
+  IConfig,
+} from "@microsoft/applicationinsights-web";
+import { Router } from "vue-router";
+
+export type InsightsOptions = {
+  id?: string;
+  router?: Router;
+  baseName?: string;
+  appInsights?: ApplicationInsights;
+  trackInitialPageView?: boolean;
+  onAfterScriptLoaded?(insights: ApplicationInsights): void;
+  appInsightsConfig?: IConfiguration & IConfig;
+};
+
 /**
  * Install function passed to Vue.use() or app.use() show documentation on vue.js website.
  *
  * @param app
  * @param options
  */
-function install(app: any, options: any) {
+function install(app: any, options: InsightsOptions) {
   const config = options.appInsightsConfig || {};
   config.instrumentationKey = config.instrumentationKey || options.id;
-  let insights: any;
+  let insights: ApplicationInsights;
   const isVue2 = app.prototype;
 
   if (isVue2) {
@@ -34,7 +51,7 @@ function install(app: any, options: any) {
     if (options.trackInitialPageView !== false) {
       setupPageTracking(options, insights);
     } else {
-      router.onReady(() => setupPageTracking(options, insights));
+      router.isReady().then(() => setupPageTracking(options, insights));
     }
   }
 
@@ -49,25 +66,30 @@ function install(app: any, options: any) {
  * Track route changes as page views with AppInsights
  * @param options
  */
-function setupPageTracking(options: any, app: any) {
+function setupPageTracking(
+  options: InsightsOptions,
+  inisghts: ApplicationInsights
+) {
   const router = options.router;
 
   const baseName = options.baseName || "(Vue App)";
 
-  router.beforeEach((route: any, from: any, next: any) => {
-    const name = baseName + " / " + route.name;
-    app.context.telemetryTrace.traceID = Util.generateW3CId();
-    app.context.telemetryTrace.name = route.name;
-    app.startTrackPage(name);
-    next();
-  });
+  if (router) {
+    router.beforeEach((route: any, from: any, next: any) => {
+      const name = baseName + " / " + route.name;
+      inisghts.context.telemetryTrace.traceID = Util.generateW3CId();
+      inisghts.context.telemetryTrace.name = route.name;
+      inisghts.startTrackPage(name);
+      next();
+    });
 
-  router.afterEach((route: any) => {
-    const name = baseName + " / " + route.name;
-    const url = location.protocol + "//" + location.host + route.fullPath;
-    app.stopTrackPage(name, url);
-    app.flush();
-  });
+    router.afterEach((route: any) => {
+      const name = baseName + " / " + route.name;
+      const url = location.protocol + "//" + location.host + route.fullPath;
+      inisghts.stopTrackPage(name, url);
+      inisghts.flush();
+    });
+  }
 }
 
 export default install;
