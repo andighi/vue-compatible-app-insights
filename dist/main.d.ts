@@ -1,6 +1,6 @@
 import { ApplicationInsights, IConfiguration, IConfig } from "@microsoft/applicationinsights-web";
 import { Router } from "vue-router";
-export type InsightsOptions = {
+export type AppInsightsOptions = {
     id?: string;
     router?: Router;
     baseName?: string;
@@ -15,5 +15,5 @@ export type InsightsOptions = {
  * @param app
  * @param options
  */
-declare function install(app: any, options: InsightsOptions): void;
+declare function install(app: any, options: AppInsightsOptions): void;
 export default install;

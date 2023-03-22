@@ -9813,13 +9813,14 @@ function install(app, options) {
   } else {
     insights = new Initialization({ config });
     insights.loadAppInsights();
-    if (typeof options.onAfterScriptLoaded === "function") {
+    console.log(options.onAfterScriptLoaded);
+    if (options.onAfterScriptLoaded) {
       options.onAfterScriptLoaded(insights);
     }
   }
   const router = options.router;
   if (router) {
-    if (options.trackInitialPageView !== false) {
+    if (options.trackInitialPageView) {
       setupPageTracking(options, insights);
     } else {
       router.isReady().then(() => setupPageTracking(options, insights));

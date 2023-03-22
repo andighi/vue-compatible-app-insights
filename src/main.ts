@@ -6,7 +6,7 @@ import {
 } from "@microsoft/applicationinsights-web";
 import { Router } from "vue-router";
 
-export type InsightsOptions = {
+export type AppInsightsOptions = {
   id?: string;
   router?: Router;
   baseName?: string;
@@ -22,7 +22,7 @@ export type InsightsOptions = {
  * @param app
  * @param options
  */
-function install(app: any, options: InsightsOptions) {
+function install(app: any, options: AppInsightsOptions) {
   const config = options.appInsightsConfig || {};
   config.instrumentationKey = config.instrumentationKey || options.id;
   let insights: ApplicationInsights;
@@ -35,20 +35,20 @@ function install(app: any, options: InsightsOptions) {
     app.config.globalProperties.$insights = null;
     insights = app.config.globalProperties.$insights;
   }
-
   if (options.appInsights) {
     insights = options.appInsights;
   } else {
     insights = new ApplicationInsights({ config });
     insights.loadAppInsights();
-    if (typeof options.onAfterScriptLoaded === "function") {
+    console.log(options.onAfterScriptLoaded);
+    if (options.onAfterScriptLoaded) {
       options.onAfterScriptLoaded(insights);
     }
   }
   const router = options.router;
   // Watch route event if router option is defined.
   if (router) {
-    if (options.trackInitialPageView !== false) {
+    if (options.trackInitialPageView) {
       setupPageTracking(options, insights);
     } else {
       router.isReady().then(() => setupPageTracking(options, insights));
@@ -67,11 +67,10 @@ function install(app: any, options: InsightsOptions) {
  * @param options
  */
 function setupPageTracking(
-  options: InsightsOptions,
+  options: AppInsightsOptions,
   inisghts: ApplicationInsights
 ) {
   const router = options.router;
-
   const baseName = options.baseName || "(Vue App)";
 
   if (router) {
