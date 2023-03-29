@@ -9813,7 +9813,6 @@ function install(app, options) {
   } else {
     insights = new Initialization({ config });
     insights.loadAppInsights();
-    console.log(options.onAfterScriptLoaded);
     if (options.onAfterScriptLoaded) {
       options.onAfterScriptLoaded(insights);
     }

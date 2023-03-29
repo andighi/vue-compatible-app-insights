@@ -16,6 +16,8 @@ export type AppInsightsOptions = {
   appInsightsConfig?: IConfiguration & IConfig;
 };
 
+export type AppCompatibleInsights = ApplicationInsights;
+
 /**
  * Install function passed to Vue.use() or app.use() show documentation on vue.js website.
  *
@@ -40,7 +42,6 @@ function install(app: any, options: AppInsightsOptions) {
   } else {
     insights = new ApplicationInsights({ config });
     insights.loadAppInsights();
-    console.log(options.onAfterScriptLoaded);
     if (options.onAfterScriptLoaded) {
       options.onAfterScriptLoaded(insights);
     }
