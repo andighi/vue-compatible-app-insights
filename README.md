@@ -84,13 +84,70 @@ app.use(VueCompatibleAppInsights, appInsightsOptions);
 - **appInsightsConfig** Object where you can put custom [AppInsights configuration](https://github.com/microsoft/ApplicationInsights-JS#configuration) _(optional, defaults to empty object)_
 
 ## Examples
-
+### Vue3
 ```js
 <script setup lang="ts">
-import { inject } from 'vue';
-const insights = inject('appInsights');
+import { inject } from 'vue'
+import type { AppCompatibleInsights } from 'vue-compatible-app-insights'
+// or import { AppCompatibleInsights } from 'vue-compatible-app-insights' if your project settings allows you to
+
+const insights: AppCompatibleInsights = inject('appInsights')
+
+const getUsers = async () => {
+  try {
+    await ApiService.getUsers()
+  } catch (e) {
+    insights.appInsights.trackEvent({ name: 'GET_USERS_ERROR' })
+  }
+}
 
 </script>
 ```
+
+### Vue2
+
+```js
+<script>
+export default {
+  name: "App",
+  data() {
+    return {
+      message: "Hello World!",
+      insights: this.$appInsights,
+    };
+  },
+  methods: {
+    onClick() {
+      console.log(this.insights);
+    },
+  },
+};
+</script>
+```
+
+## Other Examples
+```js
+import VueCompatibleAppInsights from 'vue-compatible-app-insights';
+import type { AppInsightsOptions, AppCompatibleInsights } from 'vue-compatible-app-insights'
+// or import VueCompatibleAppInsights, { AppInsightsOptions, AppCompatibleInsights } from 'vue-compatible-app-insights' if your project settings allows you to
+
+const app = createApp(App);
+
+const afterInsightsCallback = (insights: AppCompatibleInsights) => {
+    insights.someAction()
+};
+
+const options: AppInsightsOptions = {
+  baseName: 'My app name',
+  id: 'XXXXXXXX--XXXX-XXXX-XXXXXXXXXXXX',
+  onAfterScriptLoaded: afterInsightsCallback,
+};
+
+app.use(VueCompatibleAppInsights, options);
+
+app.mount('#app');
+
+```
+
 
 
