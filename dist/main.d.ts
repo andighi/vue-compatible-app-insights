@@ -2,7 +2,7 @@ import { ApplicationInsights, IConfiguration, IConfig } from "@microsoft/applica
 import { Router } from "vue-router";
 export type AppInsightsOptions = {
     id?: string;
-    router?: Router;
+    router?: Router & any;
     baseName?: string;
     appInsights?: ApplicationInsights;
     trackInitialPageView?: boolean;

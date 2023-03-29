@@ -9822,12 +9822,15 @@ function install(app, options) {
     if (options.trackInitialPageView) {
       setupPageTracking(options, insights);
     } else {
-      router.isReady().then(() => setupPageTracking(options, insights));
+      if (isVue2)
+        router.onReady(() => setupPageTracking(options, insights));
+      else
+        router.isReady().then(() => setupPageTracking(options, insights));
     }
   }
   if (isVue2) {
     Object.defineProperty(app.prototype, "$appInsights", {
-      get: () => app.appInsights
+      get: () => insights
     });
   } else
     app.provide("appInsights", insights);
